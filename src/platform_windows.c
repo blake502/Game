@@ -37,6 +37,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProcA(hwnd, uMsg, wParam, lParam);
 }
 
+void* platform_allocate(u32 size)
+{
+    return malloc(size);
+}
+
+void platform_free(void* block)
+{
+    free(block);
+}
+
 void create_window(window_info* w_info)
 {
     WNDCLASS wc = { };
