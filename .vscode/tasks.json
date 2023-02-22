@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run 'build.bat'",
+            "label": "Build project",
             "command": "utils/build.bat",
             "group": {
                 "kind": "build"
