@@ -44,3 +44,4 @@ _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 //#define S_CLAMP(value, min, max) (KMAX(min, KMIN(value, max)))
 
 //TODO: Platform detection
+#define WINDOWS true
