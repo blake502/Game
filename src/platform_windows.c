@@ -11,24 +11,24 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch (uMsg)
     {
         case WM_SIZE:
-                int width = LOWORD(lParam);
-                int height = HIWORD(lParam);
+            int width = LOWORD(lParam);
+            int height = HIWORD(lParam);
 
-                //TODO: Handle resizing
-                //OnSize(width, height);
+            //TODO: Handle resizing
+            //OnSize(width, height);
             break;
         case WM_PAINT:
             //TODO: Handle paint case
             /*
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hwnd, &ps);
-                FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
-                EndPaint(hwnd, &ps);
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
+            EndPaint(hwnd, &ps);
             */
             break;
         case WM_CLOSE:
             //if (MessageBox(hwnd, "Are you sure you want to exit? Any unsaved progress will be lost.", "Game", MB_OKCANCEL) == IDOK)
-                DestroyWindow(hwnd);
+            DestroyWindow(hwnd);
             break;
         case WM_DESTROY:
             PostQuitMessage(0);
