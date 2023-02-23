@@ -3,7 +3,7 @@
 echo Building...
 
 set include_flags=-I%Vulkan_SDK%\include
-set linker_flags=-luser32
+set linker_flags=-luser32 -lwinmm
 set output_dir=bin\
 set output_name=main
 set output_type=.exe

@@ -3,8 +3,14 @@
 #ifdef WINDOWS
 #include <windows.h>
 #include <windowsx.h>
+#include <timeapi.h>
 #include "platform.h"
 #include "input.h"
+#include "clock.h"
+
+static f64 clock_frequency;
+static LARGE_INTEGER start_time;
+static UINT min_period;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -72,6 +78,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     }
     
+    TIMECAPS tc;
+    timeGetDevCaps(&tc, sizeof(tc));
+    min_period = tc.wPeriodMin;
+
     return DefWindowProcA(hwnd, uMsg, wParam, lParam);
 }
 
@@ -83,6 +93,44 @@ void* platform_allocate(u32 size)
 void platform_free(void* block)
 {
     free(block);
+}
+
+
+
+void clock_setup() {
+    LARGE_INTEGER frequency;
+    QueryPerformanceFrequency(&frequency);
+    clock_frequency = 1.0 / (f64)frequency.QuadPart;
+    QueryPerformanceCounter(&start_time);
+}
+
+f64 platform_get_absolute_time() {
+    if (!clock_frequency) {
+        clock_setup();
+    }
+
+    LARGE_INTEGER now_time;
+    QueryPerformanceCounter(&now_time);
+    return (f64)now_time.QuadPart * clock_frequency;
+}
+
+void platform_sleep(u64 ms) {
+    clock clock;
+    clock_start(&clock);
+    timeBeginPeriod(min_period);
+    Sleep(ms);
+    timeEndPeriod(min_period);
+
+    clock_update(&clock);
+    f64 observed = clock.elapsed * 1000.0;
+    f64 ms_remaining = ms - observed;
+
+    // spin lock
+    clock_start(&clock);
+    while(clock.elapsed * 1000.0 < ms_remaining) {
+        _mm_pause();
+        clock_update(&clock);
+    }
 }
 
 void create_window(window_info* w_info)
