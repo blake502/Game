@@ -17,12 +17,14 @@ int main()
     platform_free(w_info);
     */
 
+/*
     clock clock;
     printf("Begin");
     clock_start(&clock);
     platform_sleep(1000/240);
     clock_update(&clock);
     printf("End %f", clock.elapsed*1000);
+*/
 
     return 0;
 }
