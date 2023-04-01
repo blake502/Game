@@ -23,9 +23,9 @@ typedef struct range {
 }range;
 */
 
-#define true 1;
-#define false 0;
-#define null NULL;
+#define true 1
+#define false 0
+#define null NULL
 
 _Static_assert(sizeof(u8) == 1, "Type u8 must have size of 1 byte");
 _Static_assert(sizeof(u16) == 2, "Type u16 must have size of 2 byte");
@@ -52,3 +52,4 @@ _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 #endif
 
 //TODO: Import/Export
+#define S_API
