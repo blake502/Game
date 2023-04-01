@@ -95,8 +95,6 @@ void platform_free(void* block)
     free(block);
 }
 
-
-
 void clock_setup() {
     LARGE_INTEGER frequency;
     QueryPerformanceFrequency(&frequency);
@@ -137,7 +135,7 @@ void create_window(window_info* w_info)
 {
     HINSTANCE h_instance = GetModuleHandleA(0);
 
-    WNDCLASS wc = { };
+    WNDCLASS wc = {0};
     wc.lpfnWndProc   = WindowProc;
     wc.hInstance     = h_instance;
     wc.lpszClassName = w_info->class_name;
@@ -162,7 +160,7 @@ void create_window(window_info* w_info)
 
     ShowWindow(hwnd, 5);
 
-    MSG msg = { };
+    MSG msg = {0};
     while (GetMessage(&msg, NULL, 0, 0) > 0)
     {
         TranslateMessage(&msg);

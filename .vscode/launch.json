@@ -6,8 +6,17 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/main.exe",
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal"
+            "cwd": "${workspaceFolder}/bin/",
+            "console": "integratedTerminal",
+            "preLaunchTask": "Build"
+        },
+        {
+            "name": "Debug (Linux)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/main",
+            "cwd": "${workspaceFolder}/bin/",
+            "preLaunchTask": "Build"
         }
         
     ]

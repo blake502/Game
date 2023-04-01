@@ -2,8 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build project",
-            "command": "utils/build.bat",
+            "label": "Build",
+            "windows":{
+                "command": "utils/build.bat",
+            },
+            "linux":{
+                "command": "utils/build.sh",
+            },
             "group": {
                 "kind": "build"
             }

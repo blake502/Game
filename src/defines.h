@@ -43,5 +43,12 @@ _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 //#define S_MAX(x, y) (x > y ? x : y)
 //#define S_CLAMP(value, min, max) (KMAX(min, KMIN(value, max)))
 
-//TODO: Platform detection
+//TODO: Better platform detection
+#ifdef _WIN64
 #define WINDOWS true
+#endif
+#if defined(__linux__) || defined(__gnu_linux__)
+#define LINUX true
+#endif
+
+//TODO: Import/Export
