@@ -12,5 +12,6 @@ int main()
         if(!platform_pump_messages(&state))
             break;
 
+    platform_shutdown(&state);
     return 0;
 }
