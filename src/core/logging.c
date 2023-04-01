@@ -1,5 +1,6 @@
 #include "logging.h"
 #include "assert.h"
+#include "platform\platform.h"
 
 //TODO: Temp
 #include <stdio.h>
@@ -12,20 +13,25 @@ S_API void log_output(logging_level level, const char* message, ...)
 
     b8 is_error = level <= LOGGING_LEVEL_ERROR;
 
-    char in_message[32000];
-    memset(in_message, 0, sizeof(in_message));
+    const i32 msg_length = 32000;
+    char in_message[msg_length];
+    platform_setmem(in_message, 0, sizeof(in_message));
 
     __builtin_va_list arg_ptr;
     va_start(arg_ptr, message);
-    vsnprintf(in_message, 32000, message, arg_ptr);
+    vsnprintf(in_message, msg_length, message, arg_ptr);
     va_end(arg_ptr);
 
-    char out_message[32000];
-    memset(out_message, 0, sizeof(out_message));
+    char out_message[msg_length];
+    platform_setmem(out_message, 0, sizeof(out_message));
     
     sprintf(out_message, "%s%s\n", level_strings[level], in_message);
 
-    printf("%s", out_message);
+    if(is_error)
+        platform_console_write_error(out_message, level);
+    else
+        platform_console_write(out_message, level);
+
 }
 
 void report_assertion_failure(const char* expression, const char* message, const char* file, i32 line)
