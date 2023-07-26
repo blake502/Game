@@ -8,7 +8,7 @@ set input_files=
 for /R %%f in (*.c) do ( set input_files=!input_files! %%f )
 
 set include_flags=-I%vulkan_sdk%\include -Isrc\
-set linker_flags=-luser32 -lwinmm
+set linker_flags=-luser32 -lwinmm -lvulkan-1 -L%VULKAN_SDK%\Lib
 set compiler_flags=-g
 set output_dir=bin\
 set output_name=main

@@ -88,7 +88,7 @@ void platform_shutdown(platform_state *plat_state)
 {
     internal_state *state = (internal_state*)plat_state->internal_state;
 
-    if(state->hwnd)
+    if(state && state->hwnd)
     {
         DestroyWindow(state->hwnd);
         state->hwnd = 0;
@@ -98,8 +98,11 @@ void platform_shutdown(platform_state *plat_state)
 b8 platform_pump_messages(platform_state *plat_state)
 {
     MSG message;
-    while(PeekMessageA(&message, NULL, 0, 0, PM_REMOVE))
+    while(PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
     {
+        if (message.message == WM_QUIT)
+            return false;
+        
         TranslateMessage(&message);
         DispatchMessage(&message);
     }
