@@ -3,11 +3,12 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/*",
+                "${workspaceFolder}/engine/src/*",
                 "${VULKAN_SDK}/include"
             ],
             "defines": [
-                "DEBUG"
+                "DEBUG",
+                "S_EXPORT"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
@@ -17,17 +18,18 @@
         {
             "name": "Windows",
             "includePath": [
-                "${workspaceFolder}/src/*",
+                "${workspaceFolder}/engine/src/*",
                 "${VULKAN_SDK}/include"
             ],
             "defines": [
-                "DEBUG"
+                "DEBUG",
+                "SEXPORT"
             ],
             "compilerPath": "C:/Program Files/LLVM/bin/clang.exe",
             "cStandard": "c17",
             "windowsSdkVersion": "10.0.22000.0",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "windows-clang-x64"
         }
     ],
     "version": 4

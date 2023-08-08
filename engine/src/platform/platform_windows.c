@@ -1,8 +1,9 @@
+#include "defines.h"
 #include "platform.h"
 
 #ifdef WINDOWS
-#include "core\logging.h"
-#include "core\assertion.h"
+#include "core/logging.h"
+#include "core/assertion.h"
 #include <windows.h>
 #include <windowsx.h>
 
@@ -178,8 +179,8 @@ LRESULT CALLBACK windows_proccess_message(HWND hwnd, UINT uMsg, WPARAM wParam, L
         case WM_ERASEBKGND: S_TRACE("WM_ERASEBKGND"); return 1; //Prevents flicker
         case WM_SIZE:
             S_TRACE("WM_SIZE")
-            int width = LOWORD(lParam);
-            int height = HIWORD(lParam);
+            //int width = LOWORD(lParam);
+            //int height = HIWORD(lParam);
 
             //TODO: Handle resizing
             //OnSize(width, height);

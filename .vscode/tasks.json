@@ -1,13 +1,38 @@
 {
     "version": "2.0.0",
     "tasks": [
+        
         {
-            "label": "Build",
+            "label": "Build All",
             "windows":{
-                "command": "utils/build.bat",
+                "command": "build-all.bat"
             },
             "linux":{
-                "command": "utils/build.sh",
+                "command": "build-all.sh"
+            },
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "Build Engine",
+            "windows":{
+                "command": "build-engine.bat"
+            },
+            "linux":{
+                "command": "build-engine.sh"
+            },
+            "group": {
+                "kind": "build"
+            }
+        },
+        {
+            "label": "Build Testbed",
+            "windows":{
+                "command": "build-testbed.bat"
+            },
+            "linux":{
+                "command": "build-testbed.sh"
             },
             "group": {
                 "kind": "build"

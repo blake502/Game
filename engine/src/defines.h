@@ -52,4 +52,20 @@ _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 #endif
 
 //TODO: Import/Export
+#ifdef S_EXPORT
+// Exports
+#ifdef _MSC_VER
+#define S_API __declspec(dllexport)
+#else
+#define S_API __attribute__((visibility("default")))
+#endif
+#else
+// Imports
+#ifdef _MSC_VER
+/** @brief Import/export qualifier */
+#define S_API __declspec(dllimport)
+#else
+/** @brief Import/export qualifier */
 #define S_API
+#endif
+#endif

@@ -2,21 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug (Windows)",
+            "name": "Debug Testbed (Windows)",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/main.exe",
+            "program": "${workspaceFolder}/bin/testbed.exe",
             "cwd": "${workspaceFolder}/bin/",
             "console": "integratedTerminal",
-            "preLaunchTask": "Build"
+            "preLaunchTask": "Build All"
         },
         {
-            "name": "Debug (Linux)",
+            "name": "Debug Testbed (Linux)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/main",
+            "program": "${workspaceFolder}/bin/testbed",
             "cwd": "${workspaceFolder}/bin/",
-            "preLaunchTask": "Build"
+            "preLaunchTask": "Build All"
         }
         
     ]

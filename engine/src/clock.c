@@ -1,6 +1,6 @@
 #include "defines.h"
 #include "clock.h"
-#include "platform\platform.h"
+#include "platform/platform.h"
 
 /*
 void clock_update(clock* clock) {

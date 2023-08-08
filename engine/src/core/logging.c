@@ -7,6 +7,11 @@
 #include <string.h>
 #include <stdarg.h>
 
+void initialize_logging()
+{
+    
+}
+
 S_API void log_output(logging_level level, const char* message, ...)
 {
     const char* level_strings[6] = {"[FATAL]: ", "[ERROR]: ", "[WARN]:  ", "[INFO]:  ", "[DEBUG]: ", "[TRACE]: "};

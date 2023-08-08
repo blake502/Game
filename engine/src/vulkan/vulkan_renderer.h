@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "defines.h"
-#include <vulkan\vulkan.h>
+#include <vulkan/vulkan.h>
 
 int initialize_vulkan()
 {
