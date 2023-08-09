@@ -2,4 +2,6 @@
 *.dll
 *.ilk
 *.pdb
+*.exp
+*.lib
 settings.json
