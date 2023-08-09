@@ -1,6 +1,6 @@
 #include "logging.h"
 #include "assert.h"
-#include "platform\platform.h"
+#include "platform/platform.h"
 
 //TODO: Temp
 #include <stdio.h>

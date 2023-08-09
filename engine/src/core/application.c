@@ -4,6 +4,7 @@
 #include "assertion.h"
 #include "logging.h"
 #include "platform/platform.h"
+#include "core/s_memory.h"
 
 typedef struct application_state {
     game* game_inst;
@@ -33,8 +34,6 @@ b8 application_create(game* game_inst)
     app_state.is_running = true;
     app_state.is_suspended = false;
 
-    initialize_logging();
-
     if(!platform_startup(&app_state.platform,
         app_config->name,
         app_config->start_pos_x,
@@ -60,6 +59,8 @@ b8 application_create(game* game_inst)
 
 b8 application_run()
 {
+    S_INFO(get_memory_usage_str());
+    
     while(app_state.is_running)
     {
         if(!platform_pump_messages(&app_state.platform))

@@ -121,19 +121,19 @@ void platform_free(void* block)
     free(block);
 }
 
-void platform_zero(void* block, u64 size)
+void* platform_zero(void* block, u64 size)
 {
-    memset(block, 0, size);
+    return memset(block, 0, size);
 }
 
-void platform_copy(void* dest, const void* source, u64 size)
+void* platform_copy(void* dest, const void* source, u64 size)
 {
-    memcpy(dest, source, size);
+    return memcpy(dest, source, size);
 }
 
-void platform_setmem(void* dest, i32 value, u64 size)
+void* platform_setmem(void* dest, i32 value, u64 size)
 {
-    memset(dest, value, size);
+    return memset(dest, value, size);
 }
 
 void platform_console_write(const char* message, u8 color)

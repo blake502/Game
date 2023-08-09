@@ -1,6 +1,7 @@
-#include "core\application.h"
-#include "core\logging.h"
+#include "core/application.h"
+#include "core/logging.h"
 #include "game_types.h"
+#include "core/s_memory.h"
 
 extern b8 create_game(game* out_game);
 
@@ -8,7 +9,11 @@ extern b8 create_game(game* out_game);
 //The main entry point of the application
 int main(void)
 {
-    S_INFO("Starting...");
+
+    initialize_memory();
+    initialize_logging();
+
+    S_INFO("Starting game...");
 
     game game_inst;
     if(!create_game(&game_inst))
@@ -36,6 +41,8 @@ int main(void)
         S_INFO("Application did not shut down gracefully!");
         return 2;
     }
+
+    shutdown_memory();
     
     return 0;
 }

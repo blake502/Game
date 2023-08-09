@@ -20,7 +20,8 @@ typedef enum logging_level {
     LOGGING_LEVEL_MAX,
 } logging_level;
 
-void initialize_logging();
+//TODO: Remove S_API
+S_API void initialize_logging();
 
 S_API void log_output(logging_level level, const char* message, ...);
 
