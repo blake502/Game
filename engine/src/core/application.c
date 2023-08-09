@@ -1,9 +1,12 @@
+
 #include "application.h"
+#include "game_types.h"
 #include "assertion.h"
 #include "logging.h"
 #include "platform/platform.h"
 
 typedef struct application_state {
+    game* game_inst;
     b8 is_running;
     b8 is_suspended;
     platform_state platform;
@@ -15,23 +18,41 @@ typedef struct application_state {
 static b8 initialized = false;
 static application_state app_state;
 
-S_API b8 application_create(application_config* config)
+b8 application_create(game* game_inst)
 {
-    S_ASSERT_MSG(!initialized, "Attempted to initialize application! Application is already initialized!");
+    application_config* app_config = &game_inst->app_config;
+
+    if(initialized)
+    {
+        S_ERROR("Attempted to initialize application! Application is already initialized!");
+        return false;
+    }
+    
+    app_state.game_inst = game_inst;
+
     app_state.is_running = true;
     app_state.is_suspended = false;
 
     initialize_logging();
 
-    S_ASSERT_MSG(
-        platform_startup(&app_state.platform,
-            config->name,
-            config->start_pos_x,
-            config->start_pos_y,
-            config->start_width,
-            config->start_height),
-        "Failed to initiate platform layer.");
+    if(!platform_startup(&app_state.platform,
+        app_config->name,
+        app_config->start_pos_x,
+        app_config->start_pos_y,
+        app_config->start_width,
+        app_config->start_height))
+    {
+        S_ERROR("Failed to initiate platform layer.");
+        return false;
+    }
 
+    if(!app_state.game_inst->initialize(app_state.game_inst))
+    {
+        S_FATAL("Could not initialize game!");
+        return false;
+    }
+
+    app_state.game_inst->on_resize(app_state.game_inst, app_state.width, app_state.height);
     
     initialized = true;
     return true;
@@ -40,11 +61,30 @@ S_API b8 application_create(application_config* config)
 b8 application_run()
 {
     while(app_state.is_running)
+    {
         if(!platform_pump_messages(&app_state.platform))
         {
             app_state.is_running = false;
             break;
         }
+        if(!app_state.is_suspended)
+        {
+            //TODO: Delta time
+            if(!app_state.game_inst->update(app_state.game_inst, (f32)0))
+            {
+                S_FATAL("Game update failed, shutting down!");
+                app_state.is_running = false;
+                break;
+            }
+
+            if(!app_state.game_inst->render(app_state.game_inst, (f32)0))
+            {
+                S_FATAL("Game render failed, shutting down!");
+                app_state.is_running = false;
+                break;
+            }
+        }
+    }
 
     app_state.is_running = false;
     platform_shutdown(&app_state.platform);

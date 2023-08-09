@@ -23,7 +23,7 @@
             ],
             "defines": [
                 "DEBUG",
-                "SEXPORT"
+                "S_EXPORT"
             ],
             "compilerPath": "C:/Program Files/LLVM/bin/clang.exe",
             "cStandard": "c17",
