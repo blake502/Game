@@ -2,12 +2,15 @@
 
 #include "defines.h"
 
-//Memory layout
+//Constants
+#define DARRAY_DEFAULT_CAPACITY 1
+#define DARRAY_RESIZE_FACTOR 2
+
+//Enum used as memory layout offset
 //u64 capacity
 //u64 length
 //u64 stride
 //void* elements
-
 enum {
     DARRAY_CAPACITY,
     DARRAY_LENGTH,
@@ -15,6 +18,7 @@ enum {
     DARRAY_FIELD_LENGTH
 };
 
+#pragma region Private functions
 S_API void* _darray_create(u64 length, u64 stride);
 S_API void _darray_destroy(void* array);
 
@@ -28,10 +32,9 @@ S_API void _darray_pop(void* array, void* dest);
 
 S_API void* _darray_pop_at(void* array, u64 index, void* dest);
 S_API void* _darray_insert_at(void* array, u64 index, void* value_ptr);
+#pragma endregion
 
-#define DARRAY_DEFAULT_CAPACITY 1
-#define DARRAY_RESIZE_FACTOR 2
-
+#pragma region Public macros
 #define darray_create(type) \
     _darray_create(DARRAY_DEFAULT_CAPACITY, sizeof(type))
 
@@ -72,3 +75,5 @@ S_API void* _darray_insert_at(void* array, u64 index, void* value_ptr);
 
 #define darray_length_set(array, value)\
     _darray_field_set(array, DARRAY_LENGTH, value)
+
+#pragma endregion
