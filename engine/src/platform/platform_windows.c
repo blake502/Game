@@ -4,6 +4,8 @@
 #ifdef WINDOWS
 #include "core/logging.h"
 #include "core/assertion.h"
+#include "core/event.h"
+#include "core/input.h"
 #include <windows.h>
 #include <windowsx.h>
 
@@ -176,16 +178,27 @@ LRESULT CALLBACK windows_proccess_message(HWND hwnd, UINT uMsg, WPARAM wParam, L
 {
     switch (uMsg)
     {
-        case WM_ERASEBKGND: S_TRACE("WM_ERASEBKGND"); return 1; //Prevents flicker
+        /*case WM_ERASEBKGND:
+        {
+            S_TRACE("WM_ERASEBKGND");
+            return 1; //Prevents flicker?
+        }*/
         case WM_SIZE:
-            S_TRACE("WM_SIZE")
-            //int width = LOWORD(lParam);
-            //int height = HIWORD(lParam);
+        {
+            RECT r;
+            GetClientRect(hwnd, &r);
 
-            //TODO: Handle resizing
-            //OnSize(width, height);
-            break;
+            u32 width = r.right - r.left;
+            u32 height = r.bottom - r.top;
+
+            event_context context;
+            context.data.u16[0] = width;
+            context.data.u16[0] = height;
+            event_fire(EVENT_CODE_RESIZED, 0, context);
+            
+        }break;
         case WM_PAINT:
+        {
             //TODO: Handle paint case
             /*
             PAINTSTRUCT ps;
@@ -193,46 +206,76 @@ LRESULT CALLBACK windows_proccess_message(HWND hwnd, UINT uMsg, WPARAM wParam, L
             FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
             EndPaint(hwnd, &ps);
             */
-            break;
+        } break;
         case WM_CLOSE:
+        {
             S_INFO("WM_CLOSE");
             DestroyWindow(hwnd);
-            break;
-        case WM_DESTROY:
+        } break;
+        case WM_DESTROY: {
+            event_context context = {0};
+            event_fire(EVENT_CODE_APPLICATION_QUIT, 0, context);
             S_INFO("WM_DESTROY");
             PostQuitMessage(0);
-            break;
+        } break;
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
         case WM_KEYUP:
-        case WM_SYSKEYUP:            
-            /*
-            b8 is_key_down = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN);
+        case WM_SYSKEYUP:
+        {
+            b8 pressed = (uMsg == WM_KEYDOWN || uMsg == WM_SYSKEYDOWN);
+            keys key = (u16)wParam;
 
-            //keys key = (keys)wParam;
-
-            //TODO: Handle extended scan codes
-            b8 is_extended = (HIWORD(lParam) & KF_EXTENDED) == KF_EXTENDED;
-            if (wParam == VK_MENU) {
-                key = is_extended ? KEY_RALT : KEY_LALT;
-            } else if (wParam == VK_SHIFT) {
-                // Annoyingly, KF_EXTENDED is not set for shift keys.
-                u32 left_shift = MapVirtualKey(VK_LSHIFT, MAPVK_VK_TO_VSC);
-                u32 scancode = ((lParam & (0xFF << 16)) >> 16);
-                key = scancode == left_shift ? KEY_LSHIFT : KEY_RSHIFT;
-            } else if (wParam == VK_CONTROL) {
-                key = is_extended ? KEY_RCONTROL : KEY_LCONTROL;
-            }
-            */
-
-            break;
+            input_process_key(key, pressed);
+            
+        } break;
         case WM_MOUSEMOVE:
-            //i32 x = GET_X_LPARAM(lParam);
-            //i32 y = GET_Y_LPARAM(lParam);
+        {
+            i32 x = GET_X_LPARAM(lParam);
+            i32 y = GET_Y_LPARAM(lParam);
 
-            // TODO: Handle mouse input
-            //onMouseMove(x, y);
-        break;
+            input_process_mouse_move(x, y);
+        } break;
+        case WM_MOUSEWHEEL:
+        {
+            i32 delta = GET_WHEEL_DELTA_WPARAM(wParam);
+            if (delta != 0)
+            {
+                delta = (delta < 0) ? -1 : 1;
+                input_process_mouse_wheel(delta);
+            }
+            
+        }break;
+        case WM_LBUTTONDOWN:
+        case WM_MBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+        case WM_LBUTTONUP:
+        case WM_MBUTTONUP:
+        case WM_RBUTTONUP:
+        {
+            b8 pressed = uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN || uMsg == WM_LBUTTONDOWN;
+            buttons mouse_button = BUTTON_MAX;
+            switch (uMsg)
+            {
+                case WM_LBUTTONDOWN:
+                case WM_LBUTTONUP:
+                    mouse_button = BUTTON_LMB;
+                    break;
+                case WM_MBUTTONDOWN:
+                case WM_MBUTTONUP:
+                    mouse_button = BUTTON_MMB;
+                    break;
+                case WM_RBUTTONDOWN:
+                case WM_RBUTTONUP:
+                    mouse_button = BUTTON_RMB;
+                    break;
+            }
+
+            if(mouse_button != BUTTON_MAX)
+                input_process_button(mouse_button, pressed);
+
+            
+        }break;
     }
 
     return DefWindowProcA(hwnd, uMsg, wParam, lParam);

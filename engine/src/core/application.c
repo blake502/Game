@@ -6,6 +6,7 @@
 #include "platform/platform.h"
 #include "core/event.h"
 #include "core/s_memory.h"
+#include "core/input.h"
 
 typedef struct application_state {
     game* game_inst;
@@ -19,6 +20,9 @@ typedef struct application_state {
 
 static b8 initialized = false;
 static application_state app_state;
+
+b8 application_on_event(u16 code, void* sender, void* listener_inst, event_context context);
+b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context context);
 
 b8 application_create(game* game_inst)
 {
@@ -34,6 +38,8 @@ b8 application_create(game* game_inst)
 
     app_state.is_running = true;
     app_state.is_suspended = false;
+    
+    input_initialize();
 
     if(!event_initialize())
     {
@@ -67,6 +73,10 @@ b8 application_create(game* game_inst)
 b8 application_run()
 {
     S_INFO(get_memory_usage_str());
+
+    event_register(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
+    event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
+    event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     
     while(app_state.is_running)
     {
@@ -91,13 +101,51 @@ b8 application_run()
                 app_state.is_running = false;
                 break;
             }
+
+            //TODO: Detla time
+            input_update(0);
         }
     }
 
     app_state.is_running = false;
 
+    
+    event_unregister(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
+    event_unregister(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
+    event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
+    input_shutdown();
     event_shutdown();
 
     platform_shutdown(&app_state.platform);
     return true;
+}
+
+b8 application_on_event(u16 code, void* sender, void* listener_inst, event_context context)
+{
+    switch (code)
+    {
+        case EVENT_CODE_APPLICATION_QUIT: {
+            S_INFO("Quit code recieved, shutting down.");
+            app_state.is_running = false;
+            return true;
+        }
+    }
+    return false;
+}
+
+b8 application_on_key(u16 code, void* sender, void* listener_inst, event_context context)
+{
+    if(code == EVENT_CODE_KEY_PRESSED)
+    {
+        u16 key_code = context.data.u16[0];
+        S_INFO("'%c' key pressed", key_code);
+        if(key_code == KEY_ESCAPE)
+        {
+            event_context data = {0};
+            event_fire(EVENT_CODE_APPLICATION_QUIT, 0, data);
+
+            return true;
+        }
+    }
+    return false;
 }
