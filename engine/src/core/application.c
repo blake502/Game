@@ -4,6 +4,7 @@
 #include "assertion.h"
 #include "logging.h"
 #include "platform/platform.h"
+#include "core/event.h"
 #include "core/s_memory.h"
 
 typedef struct application_state {
@@ -33,6 +34,12 @@ b8 application_create(game* game_inst)
 
     app_state.is_running = true;
     app_state.is_suspended = false;
+
+    if(!event_initialize())
+    {
+        S_ERROR("Event system failed to initialize!");
+        return false;
+    }
 
     if(!platform_startup(&app_state.platform,
         app_config->name,
@@ -88,6 +95,9 @@ b8 application_run()
     }
 
     app_state.is_running = false;
+
+    event_shutdown();
+
     platform_shutdown(&app_state.platform);
     return true;
 }
