@@ -4,6 +4,12 @@
 
 b8 game_initialize(game* game_inst)
 {
+    S_TRACE("Test trace message");
+    S_DEBUG("Test debug message");
+    S_INFO("Test info message");
+    S_WARN("Test warn message");
+    S_ERROR("Test error message");
+    S_FATAL("Test fatal message");
     return true;
 }
 

@@ -13,7 +13,7 @@ set include_flags=-I%vulkan_sdk%\include -Isrc
 set linker_flags=-luser32 -lwinmm -lvulkan-1 -L%VULKAN_SDK%\Lib
 set compiler_flags=-g -shared -Wvarargs
 rem -Wall -Werror
-set defines=-D_DEBUG -DS_EXPORT -D_CRT_SECURE_NO_WARNINGS
+set defines=-DDEBUG -DS_EXPORT -D_CRT_SECURE_NO_WARNINGS
 
 set output_dir=..\bin\
 set output_name=engine
