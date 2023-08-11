@@ -9,7 +9,9 @@
 #include "core/event.h"
 #include "core/s_memory.h"
 #include "core/input.h"
-#include "clock.h"
+#include "core/clock.h"
+
+#include "renderer/renderer_frontend.h"
 
 typedef struct application_state {
     game* game_inst;
@@ -59,6 +61,12 @@ b8 application_create(game* game_inst)
         app_config->start_height))
     {
         S_ERROR("Failed to initiate platform layer.");
+        return false;
+    }
+
+    if (!renderer_initialize(game_inst->app_config.name, &app_state.platform))
+    {
+        S_FATAL("Failed to initialize renderer!");
         return false;
     }
 
@@ -117,6 +125,11 @@ b8 application_run()
                 break;
             }
 
+            //TODO: Render packet
+            render_packet packet;
+            packet.delta_time = delta;
+            renderer_draw_frame(&packet);
+
             f64 frame_end_time = platform_get_absolute_time();
             f64 frame_elapsed_time = frame_end_time - fram_start_time;
             running_time += frame_elapsed_time;
@@ -148,6 +161,8 @@ b8 application_run()
     event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     input_shutdown();
     event_shutdown();
+    
+    renderer_shutdown();
 
     platform_shutdown(&app_state.platform);
     return true;
