@@ -2,6 +2,8 @@
 
 #include "s_memory.h"
 
+#include <string.h>
+
 u64 string_length(const char* str)
 {
     /*
