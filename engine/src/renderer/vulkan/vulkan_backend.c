@@ -2,6 +2,7 @@
 
 #include "vulkan_types.inl"
 #include "vulkan_platform.h"
+#include "vulkan_device.h"
 
 #include "core/logging.h"
 #include "core/assertion.h"
@@ -121,12 +122,28 @@ b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* app
     S_DEBUG("Vulkan debugger created.");
     #endif
 
+    S_DEBUG("Creating Vulkan surface...");
+    if(!platform_create_vulkan_surface(plat_state, &context))
+    {
+        S_ERROR("Failed to create platform surface!");
+        return false;
+    }
+    S_DEBUG("Vulkan surface created.");
+
+    if(!vulkan_device_create(&context))
+    {
+        S_ERROR("Failed to create device!");
+        return false;
+    }
+
     S_INFO("Vulkan renderer initialized successfully.");
     return true;
 }
 
 void vulkan_renderer_backend_shutdown(renderer_backend* backend)
 {
+    vulkan_device_destroy(&context);
+
     S_DEBUG("Destroying Vulkan debugger...");
     if(context.debug_messenger)
     {
