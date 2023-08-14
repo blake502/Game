@@ -142,6 +142,8 @@ b8 vulkan_renderer_backend_initialize(renderer_backend* backend, const char* app
 
 void vulkan_renderer_backend_shutdown(renderer_backend* backend)
 {
+    vkDestroySurfaceKHR(context.instance, context.surface, context.allocator);
+
     vulkan_device_destroy(&context);
 
     S_DEBUG("Destroying Vulkan debugger...");
