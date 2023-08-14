@@ -6,6 +6,9 @@ typedef struct platform_state {
     void* internal_state;
 } platform_state;
 
+//Returns true upon successfuly window creation
+//Also potentially sets up clock timing/other
+//necessary things deping on platform
 b8 platform_startup(
     platform_state *plat_state,
     const char *app_name,
@@ -17,6 +20,7 @@ b8 platform_startup(
 
 void platform_shutdown(platform_state *plat_state);
 
+//Will return true unless the platform requests a shutdown
 b8 platform_pump_messages(platform_state *plat_state);
 
 void* platform_allocate(u32 size);
@@ -27,7 +31,6 @@ void* platform_setmem(void* dest, i32 value, u64 size);
 
 void platform_console_write(const char* message, u8 color);
 void platform_console_write_error(const char* message, u8 color);
-
 
 f64 platform_get_absolute_time();
 void platform_sleep(u64 ms);
