@@ -24,6 +24,9 @@ typedef struct application_state {
     f64 last_time;
 } application_state;
 
+//TODO: Configurable target FPS
+const f64 target_frame_seconds = 1.0f / 240;
+
 static b8 initialized = false;
 static application_state app_state;
 
@@ -89,7 +92,6 @@ b8 application_run()
     app_state.last_time = app_state.clock.elapsed;
     f64 running_time = 0;
     u8 frame_count = 0;
-    f64 target_frame_seconds = 1.0f / 60;
 
     S_INFO(get_memory_usage_str());
 
@@ -97,82 +99,101 @@ b8 application_run()
     event_register(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
     event_register(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
     
+    //The main game loop
     while(app_state.is_running)
     {
         if(!platform_pump_messages(&app_state.platform))
         {
+            S_INFO("Platform initiated shutdown...");
             app_state.is_running = false;
             break;
         }
+
         if(!app_state.is_suspended)
         {
+
+            #pragma region Clock Update
             clock_update(&app_state.clock);
             f64 current_time = app_state.clock.elapsed;
             f64 delta = (current_time - app_state.last_time);
             f64 fram_start_time = platform_get_absolute_time();
+            #pragma endregion
 
+            input_update(delta);
+
+            #pragma region Application
             if(!app_state.game_inst->update(app_state.game_inst, (f32)delta))
             {
                 S_FATAL("Game update failed, shutting down!");
                 app_state.is_running = false;
                 break;
             }
-
             if(!app_state.game_inst->render(app_state.game_inst, (f32)delta))
             {
                 S_FATAL("Game render failed, shutting down!");
                 app_state.is_running = false;
                 break;
             }
+            #pragma endregion
 
+            #pragma region Redering
             //TODO: Render packet
             render_packet packet;
             packet.delta_time = delta;
             renderer_draw_frame(&packet);
+            #pragma endregion
 
+            #pragma region Sleep/Timing
             f64 frame_end_time = platform_get_absolute_time();
             f64 frame_elapsed_time = frame_end_time - fram_start_time;
             running_time += frame_elapsed_time;
             f64 remaining_seconds = target_frame_seconds - frame_elapsed_time;
             
-            if(remaining_seconds > 0)
+            b8 limit_frames = false;
+            if(remaining_seconds > 0 && limit_frames)
             {
                 u64 remaining_ms = (remaining_seconds * 1000);
 
                 //TODO: Enable sleeping
-                b8 limit_frames = false;
-                if (remaining_ms > 0 && limit_frames)
+                if (remaining_ms > 0)
                     platform_sleep(remaining_ms - 1);
 
                 frame_count++;
             }
-
-            input_update(delta);
+            #pragma endregion
 
             app_state.last_time = current_time;
         }
     }
 
+    application_shutdown();
+
+    return true;
+}
+
+void application_shutdown()
+{
     app_state.is_running = false;
 
-    
     event_unregister(EVENT_CODE_APPLICATION_QUIT, 0, application_on_event);
     event_unregister(EVENT_CODE_KEY_PRESSED, 0, application_on_key);
     event_unregister(EVENT_CODE_KEY_RELEASED, 0, application_on_key);
+
     input_shutdown();
+
     event_shutdown();
     
     renderer_shutdown();
 
     platform_shutdown(&app_state.platform);
-    return true;
 }
 
 b8 application_on_event(u16 code, void* sender, void* listener_inst, event_context context)
 {
     switch (code)
     {
-        case EVENT_CODE_APPLICATION_QUIT: {
+        case EVENT_CODE_APPLICATION_QUIT:
+        {
             S_INFO("Quit code recieved, shutting down.");
             app_state.is_running = false;
             return true;
