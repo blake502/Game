@@ -39,9 +39,9 @@ _Static_assert(sizeof(f32) == 4, "Type f32 must have size of 4 byte");
 _Static_assert(sizeof(f64) == 8, "Type f64 must have size of 8 byte");
 _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 
-//#define S_MIN(x, y) (x < y ? x : y)
-//#define S_MAX(x, y) (x > y ? x : y)
-//#define S_CLAMP(value, min, max) (KMAX(min, KMIN(value, max)))
+#define S_MIN(x, y) (x < y ? x : y)
+#define S_MAX(x, y) (x > y ? x : y)
+#define S_CLAMP(value, min, max) (S_MAX(min, S_MIN(value, max)))
 
 //TODO: Better platform detection
 #ifdef _WIN64
@@ -51,7 +51,6 @@ _Static_assert(sizeof(b8) == 1, "Type b8 must have size of 1 byte");
 #define LINUX true
 #endif
 
-//TODO: Import/Export
 #ifdef S_EXPORT
 // Exports
 #ifdef _MSC_VER
