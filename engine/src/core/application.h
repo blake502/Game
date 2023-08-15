@@ -14,4 +14,6 @@ typedef struct application_config {
 
 S_API b8 application_create(struct game* game_inst);
 
+void application_shutdown();
+
 S_API b8 application_run();
